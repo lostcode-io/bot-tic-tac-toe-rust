@@ -1,0 +1,13 @@
+[package]
+name = "bot-tic-tac-toe-rust"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+actix-web = "4.9.0"
+clap = { version = "4.5.20", features = ["derive"] }
+log = "0.4.22"
+pretty_env_logger = "0.5.0"
+rand = "0.8.5"
+serde = { version = "1.0.210", features = ["derive"] }
+serde_json = "1.0.128"
