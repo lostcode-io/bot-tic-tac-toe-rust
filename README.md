@@ -8,7 +8,7 @@ Tic-tac-toe bot written in Rust
 1. Install Rust from [here](https://www.rust-lang.org/tools/install)
 
 2. Execute the following command in the terminal
-```bash
+```console
 cargo run -- -s SECRET_HERE -p PORT_HERE
 ```
 
@@ -16,7 +16,7 @@ cargo run -- -s SECRET_HERE -p PORT_HERE
 1. Install Rust from [here](https://www.rust-lang.org/tools/install)
 
 2. Execute the following command in the terminal
-```bash
+```console
 cargo build --release
 ```
 
