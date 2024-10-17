@@ -1,3 +1,6 @@
+#[cfg(test)]
+pub mod tests;
+
 use actix_web::{get, post, web, App, HttpResponse, HttpServer, Responder};
 use clap::Parser;
 use log::{info, warn};
@@ -8,7 +11,7 @@ use std::io::Write;
 
 #[derive(Parser, Clone)]
 #[command(version, about, long_about = None)]
-struct AppData {
+pub struct AppData {
     #[arg(short, long)]
     secret: String,
 
@@ -43,7 +46,7 @@ async fn hello() -> impl Responder {
 }
 
 #[derive(Deserialize)]
-struct QueryData {
+pub struct QueryData {
     method: String,
 }
 
@@ -67,7 +70,7 @@ async fn handle_request(
     return HttpResponse::Ok().body(response);
 }
 
-fn handle_status(_body: String, config: &AppData) -> String {
+pub fn handle_status(_body: String, config: &AppData) -> String {
     info!("Handling status request");
 
     return format!(
@@ -78,13 +81,12 @@ fn handle_status(_body: String, config: &AppData) -> String {
         "secret": "{}",
         "message": "I'm ready!"
     }}"#,
-        config.version,
-        config.secret
+        config.version, config.secret
     )
     .minify();
 }
 
-fn handle_finish(_body: String, _config: &AppData) -> String {
+pub fn handle_finish(_body: String, _config: &AppData) -> String {
     info!("Handling finish request");
 
     return r#"{
@@ -95,7 +97,7 @@ fn handle_finish(_body: String, _config: &AppData) -> String {
     .minify();
 }
 
-fn handle_error(body: String, _config: &AppData) -> String {
+pub fn handle_error(body: String, _config: &AppData) -> String {
     info!("Handling error request: {}", body);
 
     return r#"{
@@ -106,7 +108,7 @@ fn handle_error(body: String, _config: &AppData) -> String {
     .minify();
 }
 
-fn handle_start(_body: String, config: &AppData) -> String {
+pub fn handle_start(_body: String, config: &AppData) -> String {
     info!("Handling start request");
 
     return format!(
@@ -118,20 +120,19 @@ fn handle_start(_body: String, config: &AppData) -> String {
         "accept": true,
         "message": "Let's go!"
     }}"#,
-        config.version,
-        config.secret
+        config.version, config.secret
     )
     .minify();
 }
 
 #[derive(Deserialize)]
-struct TurnData {
+pub struct TurnData {
     turn_number: u8,
     figure: char,
     board: [[i16; 3]; 3],
 }
 
-fn handle_turn(body: String, config: &AppData) -> String {
+pub fn handle_turn(body: String, config: &AppData) -> String {
     info!("Handling turn request");
 
     let mut file: Option<std::fs::File> = None;
@@ -141,7 +142,7 @@ fn handle_turn(body: String, config: &AppData) -> String {
                 .write(true)
                 .truncate(true)
                 .open("log.dot")
-                .expect("Failed to open log file")
+                .expect("Failed to open log file"),
         );
     }
 
@@ -161,12 +162,7 @@ fn handle_turn(body: String, config: &AppData) -> String {
     }
 
     if data.turn_number == 0 {
-        best_move = Some(
-            [[0, 0], [0, 2], [2, 0], [2, 2]]
-                .choose(&mut rand::thread_rng())
-                .unwrap()
-                .clone(),
-        );
+        best_move = Some([0, 0]);
     } else {
         for move_ in &allowed_moves {
             let mut board = original_board.clone();
@@ -230,7 +226,12 @@ fn handle_turn(body: String, config: &AppData) -> String {
     .minify();
 }
 
-fn write_board(f: &mut std::fs::File, board: [[i16; 3]; 3], new_board: [[i16; 3]; 3], score: i16) {
+pub fn write_board(
+    f: &mut std::fs::File,
+    board: [[i16; 3]; 3],
+    new_board: [[i16; 3]; 3],
+    score: i16,
+) {
     writeln!(
         f,
         "\"{}\" -> \"{}\" [label=\"{}\"]",
@@ -241,14 +242,14 @@ fn write_board(f: &mut std::fs::File, board: [[i16; 3]; 3], new_board: [[i16; 3]
     .unwrap();
 }
 
-fn board_to_string_move(board: [[i16; 3]; 3], move_: [usize; 2], figure: i16) -> String {
+pub fn board_to_string_move(board: [[i16; 3]; 3], move_: [usize; 2], figure: i16) -> String {
     let mut new_board = board.clone();
     new_board[move_[0]][move_[1]] = figure;
 
     return board_to_string(new_board);
 }
 
-fn board_to_string(board: [[i16; 3]; 3]) -> String {
+pub fn board_to_string(board: [[i16; 3]; 3]) -> String {
     let mut result = String::new();
     for row in board.iter() {
         for cell in row.iter() {
@@ -266,7 +267,7 @@ fn board_to_string(board: [[i16; 3]; 3]) -> String {
     return result;
 }
 
-fn minimax(
+pub fn minimax(
     file: &mut Option<std::fs::File>,
     given_board: [[i16; 3]; 3],
     depth: i32,
@@ -344,7 +345,7 @@ fn minimax(
     }
 }
 
-fn check_winner(board: [[i16; 3]; 3]) -> i16 {
+pub fn check_winner(board: [[i16; 3]; 3]) -> i16 {
     let winning_combinations = [
         [(0, 0), (0, 1), (0, 2)],
         [(1, 0), (1, 1), (1, 2)],
@@ -378,7 +379,7 @@ fn check_winner(board: [[i16; 3]; 3]) -> i16 {
     return 0;
 }
 
-fn get_allowed_moves(board: [[i16; 3]; 3]) -> Vec<[usize; 2]> {
+pub fn get_allowed_moves(board: [[i16; 3]; 3]) -> Vec<[usize; 2]> {
     let mut allowed_moves: Vec<[usize; 2]> = Vec::new();
 
     for i in 0..3 {
