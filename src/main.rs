@@ -397,6 +397,7 @@ pub fn get_allowed_moves(board: [[i16; 3]; 3]) -> Vec<[usize; 2]> {
 async fn main() -> std::io::Result<()> {
     let mut app_data = AppData::parse();
     app_data.version = env!("CARGO_PKG_VERSION").to_string();
+    let port = app_data.clone().port;
     std::env::set_var("RUST_APP_LOG", app_data.clone().log);
     pretty_env_logger::init_custom_env("RUST_APP_LOG");
 
@@ -406,7 +407,7 @@ async fn main() -> std::io::Result<()> {
             .service(hello)
             .service(handle_request)
     })
-    .bind(("127.0.0.1", 8083))?
+    .bind(("127.0.0.1", port))?
     .run()
     .await
 }
