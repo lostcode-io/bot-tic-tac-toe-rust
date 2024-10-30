@@ -37,7 +37,7 @@ fn test_handle_finish() {
 
     assert_eq!(
         response,
-        r#"{"status":"ok","message":"Game finished!"}"#,
+        r#"{"status":"ok","game":"tic-tac-toe","version":"0.1.0","secret":"secret","message":"Game finished!"}"#,
     );
 }
 
