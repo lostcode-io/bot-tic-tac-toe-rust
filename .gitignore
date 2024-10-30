@@ -15,3 +15,5 @@ Cargo.lock
 
 log.dot
 output.png
+
+docker-compose.yaml

@@ -86,15 +86,16 @@ pub fn handle_status(_body: String, config: &AppData) -> String {
     .minify();
 }
 
-pub fn handle_finish(_body: String, _config: &AppData) -> String {
+pub fn handle_finish(_body: String, config: &AppData) -> String {
     info!("Handling finish request");
 
-    return r#"{
+    return format!(r#"{{
         "status": "ok",
+        "game": "tic-tac-toe",
+        "version": "{}",
+        "secret": "{}",
         "message": "Game finished!"
-    }"#
-    .to_string()
-    .minify();
+    }}"#, config.version, config.secret).minify();
 }
 
 pub fn handle_error(body: String, _config: &AppData) -> String {
@@ -407,7 +408,7 @@ async fn main() -> std::io::Result<()> {
             .service(hello)
             .service(handle_request)
     })
-    .bind(("127.0.0.1", port))?
+    .bind(("0.0.0.0", port))?
     .run()
     .await
 }
